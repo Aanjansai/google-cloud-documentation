@@ -62,7 +62,7 @@ Environment setup for ChatApplication in VM instance
 
    $ git clone (url) 
 
-   ex:
+   For ex:
    $ git clone https://github.com/Aanjansai/basic-chat-app.git
 
 7. Install all the dependencies:
