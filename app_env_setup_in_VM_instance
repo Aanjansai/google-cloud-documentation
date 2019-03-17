@@ -1,0 +1,161 @@
+************************************************ application setup in vm instance **********************************************************
+
+Create an VM instance:
+
+ $ gcloud compute --project=web-application-231505 instances create chatapp 
+   --zone=us-east1-b --machine-type=f1-micro 
+   --subnet=default --network-tier=PREMIUM --maintenance-policy=MIGRATE 
+   --service-account=492844027589-compute@developer.gserviceaccount.com 
+   --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,
+     https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,
+     https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append 
+   --tags=http-server,https-server --image=ubuntu-1804-bionic-v20190307 --image-project=ubuntu-os-cloud 
+   --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=chatapp
+
+Access of VM instance from local system:
+
+After creation of VM instance:
+
+1.  Generate an SSH key from your local system:
+ 
+    $ ssh-keygen -t rsa -b 4048
+
+2.  Copy the ssh public key to the VM instance.
+
+3.  change the permissions of ssh private key
+
+    $ chmod 400 private_key
+
+4.  Access the VM instance through local system:
+
+    $ ssh username@local_host_name(ip_address_of_instance)
+
+============================================================================================================================================
+
+Environment setup for ChatApplication in VM instance
+
+1. Update the VM instance Machine.
+
+   $ sudo apt-get update
+
+2. Install python, pip, nginx and git.
+
+   $ sudo apt-get install python-pip python-dev nginx git
+
+   It asks for conformation : press 'Y'
+   
+   After installation "update" the Machine
+
+3. Install virtual environment:
+
+   $ sudo pip3 install virtualenv
+
+4. Name the virtual environment:
+
+   $ virtualenv venv
+
+5. Activate the virtual environment:
+
+   $ source venv/bin/activate
+
+6. Clone the Application from GitHub:
+
+   $ git clone (url) 
+
+   ex:
+   $ git clone https://github.com/Aanjansai/basic-chat-app.git
+
+7. Install all the dependencies:
+
+   $ pip3 install -r requirements.txt
+
+8. Install gunicorn:
+
+   $ pip3 install gunicorn
+
+# Inside settings.py modify these lines allowed host public IP address
+
+--> change the directory to the chatapplication
+   
+    $ cd chatapplication
+
+    $ sudo vim settings.py
+
+ALLOWED_HOSTS = ['ip address of your machine']
+
+save your changes and quit.
+ESC :wq
+
+============================================================================================================================================
+
+Configuration of Gunicorn server
+
+   $ sudo vim /etc/systemd/system/gunicorn.service
+
+[Unit]
+Description=gunicorn daemon
+After=network.target
+[Service]
+User=Linux
+Group=www-data
+WorkingDirectory=/home/Linux/venv/chatapplication
+ExecStart=/home/Linux/venv/bin/gunicorn --workers 3 --bind unix:/home/Linux/venv/chatapplication/chatapplication.sock 
+chatapplication.wsgi:application
+[Install]
+WantedBy=multi-user.target
+
+ESC :wq
+
+1. Reload the Daemon:
+
+   $ sudo systemctl daemon-reload
+
+2. Start the gunicorn:
+
+   $ sudo systemctl start gunicorn
+
+3. Enable the gunicorn:
+
+   $ sudo systemctl enable gunicorn
+
+============================================================================================================================================
+
+Configuration of nginx server
+
+   $ sudo vim /etc/nginx/sites-available/chatapplication
+
+
+server {
+listen 80;
+server_name ip_address(instance);
+location = /favicon.ico { access_log off; log_not_found off; }
+location /static/ {
+    root /home/Linux/venv/chatapplication;
+}
+location / {
+    include proxy_params;
+    proxy_pass http://unix:/home/Linux/venv/chatapplication/chatapplication.sock;
+}
+}
+
+ESC :wq
+
+Create soft link:
+
+   $ sudo ln -s /etc/nginx/sites-available/chatapplication /etc/nginx/sites-enabled
+
+   $ sudo nginx -t
+
+Remove the default file:
+
+   $ sudo rm /etc/nginx/sites-enabled/default
+
+
+Start the nginx server:
+
+   $ sudo service nginx restart
+
+============================================================================================================================================
+
+
+

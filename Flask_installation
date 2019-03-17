@@ -1,0 +1,38 @@
+************************************************************ Flask Installation ************************************************************
+
+1. Create a python file:
+
+   $ vim server.py
+
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+
+def hello():
+
+	return "hii!!! Welcome BridgeLabz"
+
+if __name__='__main__':
+
+	app.run(host='0.0.0.0', port=80)
+
+ESC :wq
+
+2. Install python-setuptools, python-dev and pyhton build-essential:
+
+   $ sudo apt-get install python-setuptools python-dev build-essential
+
+3. Install pip:
+
+   $ sudo easy-install pip
+
+4. Install flask:
+
+   $ sudo pip install flask
+
+============================================================================================================================================
+   
+
