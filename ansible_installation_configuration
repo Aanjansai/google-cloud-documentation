@@ -1,0 +1,73 @@
+************************************************************** Ansible **********************************************************************
+
+NOTE: Any server that has an ssh port can be configured by an Ansible machine.
+
+Steps for installing and configuring Ansible on Ubuntu are as follows:
+
+step 1. Make sure your Ubuntu machine is up to date with latest packages:
+
+	$ sudo apt-get update
+
+step 2. Now we will install the Ansible PPA repository on the system using below command:
+
+	$ sudo apt-add-repository ppa:ansible/ansible
+
+step 3. Install ansible after successfully adding the ansible ppa repository:
+
+	$ sudo apt-get install ansible
+
+step 4. Check for ansible version after installation is done:
+
+	$ ansible --version
+
+step 5. Generate ssh key in the ansible machine, which we have to copy to all 
+	the remote hosts for doing deployments or configurations on them:
+
+	$ ssh-keygen -t rsa -b 4096 -C “hostname@ip_address”
+
+step 6. Copy the ssh key generated to the remote host using the below command.
+
+NOTE: Before copying the ssh key make sure that you are able to ssh the remote host where you want to copy the key.
+
+	$ ssh-copy-id hostname@ip_address
+
+step 7. Now we need to edit the “hosts” file of ansible by specifying the group of servers/remote hosts 
+	which we need to connect and perform operations on:
+
+	$ sudo nano /etc/ansible/hosts
+
+Add the servers as highlighted below:
+
+NOTE: [test-servers] is the group-name I have given, which will refer to all the servers listed under it :
+
+Example: 
+
+[test-server]
+host_1
+host_2
+host_3
+.
+.
+.
+.
+.
+host_n
+
+step 8. Now as we have setup our “hosts” file and other configurations are done, let’s try a very simple ansible command, 
+	which will ping all the servers listed in the “hosts” file:
+
+	$ ansible all -m ping
+
+NOTE:
+	“all” means all hosts
+
+	“-m” stands for module
+
+	“ping” is one of the module of ansible
+
+
+Wola!!!!!!!!…… we have successfully installed and configure Ansible on Ubuntu machine...
+
+==============================================================================================================================================
+
+	
