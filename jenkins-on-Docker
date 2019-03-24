@@ -1,0 +1,100 @@
+*************************************************************** jenkins on Docker ************************************************************
+
+======> Docker installation..
+
+Install using the repository:
+
+NOTE:
+	Before you install Docker CE for the first time on a new host machine, you need to set up the Docker repository. 
+	Afterward, you can install and update Docker from the repository.
+
+SET UP THE REPOSITORY:
+
+step 1. Update the apt package index:
+	
+	$ sudo apt-get update
+
+step 2. Install packages to allow apt to use a repository over HTTPS:
+
+	$ sudo apt-get install \
+          apt-transport-https \
+    	  ca-certificates \
+    	  curl \
+    	  gnupg-agent \
+	  software-properties-common
+
+step 3. Add Docker’s official GPG key:
+
+	$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+step 4. Verify that you now have the key with the fingerprint 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88, 
+	by searching for the last 8 characters of the fingerprint:
+
+	$ sudo apt-key fingerprint 0EBFCD88
+
+OUTPUT: pub   rsa4096 2017-02-22 [SCEA]
+        9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+	uid           [ unknown] Docker Release (CE deb) <docker@docker.com>
+	sub   rsa4096 2017-02-22 [S]
+
+step 6. Use the following command to set up the stable repository. To add the nightly or test repository, 
+	add the word nightly or test (or both) after the word stable in the commands below:
+
+	$ sudo add-apt-repository \
+   	  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   	  $(lsb_release -cs) \
+   	  stable"
+
+========> Install Docker CE..
+
+step 1. Update the apt package index:
+
+	$ sudo apt-get update
+
+step 2. Install the latest version of Docker CE and containerd, or go to the next step to install a specific version:
+
+	$ sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+
+=========> Installing jenkins image on Docker..
+
+step 1. Pull the jenkins image from Docker Hub:
+
+	$ docker pull jenkins
+
+=========> Run the junkins image..
+
+Note:
+	--> Create a folder jenkins_home
+
+	    $ mkdir jenkins_home
+
+	--> change the ownership of the folder 
+
+	    $ chown 1000:1000 -R jenkins_home
+
+
+step 1. Run jenkins image on Docker conatiner and set the volume ot it..
+
+	$ docker run --name myjenkins -p 8080:8080 -p 50000:50000 -v $PWD/jenkins_home:/var/jenkins_home jenkins
+
+	--name     = name of the container.
+	-p 8080    = default port.
+	-p 50000   = jenkins port.
+	-v(volume) = to set the volume.
+
+Hits the ip address of you system on browser with port number 8080.
+
+--> To check the docker images:
+
+	$ dockers images -a
+
+--> To see the running containers:
+
+	$ docker ps -a
+
+	-a = all
+
+Wola!!!!!!!!...... Now we have jenkins on Docker..
+
+==============================================================================================================================================
