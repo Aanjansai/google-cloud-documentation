@@ -154,6 +154,8 @@ Remove the default file:
 Start the nginx server:
 
    $ sudo service nginx restart
+   
+ Website for more details: https://linoxide.com/linux-how-to/setup-django-postgres-nginx-gunicorn-ubuntu/
 
 ============================================================================================================================================
 
