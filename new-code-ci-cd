@@ -1,0 +1,52 @@
+#!/bin/bash
+
+ssh -i /var/lib/jenkins/.ssh/id_rsa jenkins@35.200.237.29 '
+
+sudo rm -rf /home/jenkins/chatapp
+sudo rm -rf /home/jenkins/env
+sudo rm -rf /etc/systemd/system/gunicorn.service
+sudo rm -rf /etc/systemd/system/chatapplication
+
+sudo apt-get update
+
+sudo apt-get install -y python3-pip python-dev nginx git
+
+sudo apt-get update
+
+sudo pip3 install virtualenv
+
+virtualenv venv
+'
+scp -r /var/lib/jenkins/workspace/jenkins/chatapp jenkins@35.200.237.29:/home/jenkins
+
+ssh -i /var/lib/jenkins/.ssh/id_rsa jenkins@35.200.237.29 '
+
+source /home/jenkins/venv/bin/activate
+
+pip3 install -r /home/jenkins/chatapp/requirement.txt
+
+pip3 install django bcrypt django-extensions
+
+pip3 install gunicorn
+'
+
+sudo scp -r /var/lib/jenkins/workspace/jenkins/gunicorn.service jenkins@35.200.237.29:/etc/systemd/system
+
+sudo scp -r /var/lib/jenkins/workspace/jenkins/chatapplication jenkins@35.200.237.29:/etc/nginx/sites-available
+
+ssh -i /var/lib/jenkins/.ssh/id_rsa jenkins@35.200.237.29 '
+
+sudo systemctl daemon-reload
+
+sudo systemctl start gunicorn
+
+sudo systemctl enable gunicorn
+
+sudo ln -s /etc/nginx/sites-available/chatapplication /etc/nginx/sites-enabled
+
+sudo nginx -t
+
+sudo rm /etc/nginx/sites-enabled/default
+
+service nginx restart
+'
