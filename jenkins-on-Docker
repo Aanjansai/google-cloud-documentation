@@ -95,6 +95,18 @@ Hits the ip address of you system on browser with port number 8080.
 
 	-a = all
 
+--> To start the container:
+
+	$ docker start container name/id
+	
+--> To stop the container:
+
+	$ docker stop container name/id
+	
+--> Interactivate mode:
+
+	$ docker exec -it container name/id /bin/bash
+	
 Wola!!!!!!!!...... Now we have jenkins on Docker..
 
 ==============================================================================================================================================
